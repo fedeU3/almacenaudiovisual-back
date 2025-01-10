@@ -3,14 +3,17 @@ import { EquiposModule } from './equipos/equipos.module';
 import { MiembrosModule } from './miembros/miembros.module';
 import { PedidosModule } from './pedidos/pedidos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { EquipoEntity } from './equipos/equipo.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: "postgres",
-      url: "postgresql://postgres:tCr0GAe34O3xthG8@db.dyfcrhdjmmbfhnteepvj.supabase.co:5432/postgres",
-      entities: [],
-      synchronize: true,
+      url: process.env.DATABASE_URL,
+      entities: [EquipoEntity],
+      schema: 'almacenaudiovisual'
     }),
     EquiposModule,
     MiembrosModule,
