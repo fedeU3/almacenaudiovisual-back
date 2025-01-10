@@ -5,9 +5,9 @@ import { EquiposService } from './equipos.service';
 export class EquiposController {
   constructor(private readonly appService: EquiposService) {}
 
-  @Get("hello")
-  getHello(): string {
-    return "hello";
+  @Get()
+  getHello() {
+    return this.appService.getAll();
   }
 
 }
