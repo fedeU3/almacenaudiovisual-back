@@ -6,7 +6,7 @@ export class EquiposController {
   constructor(private readonly appService: EquiposService) {}
 
   @Get()
-  getHello() {
+  getAll() {
     return this.appService.getAll();
   }
 

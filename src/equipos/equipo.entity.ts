@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { PedidoEntity } from "src/pedidos/pedido.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'equipos'})
 export class EquipoEntity {
@@ -13,4 +14,13 @@ export class EquipoEntity {
 
   @Column('text')
   pertenencia: string;
+
+  @Column('numeric')
+  cantidadTotal: number;
+
+  @Column('numeric')
+  cantidadDisponible: number;
+
+  @OneToMany(() => PedidoEntity, (pedido) => pedido.equipo)
+  pedidos: PedidoEntity[];
 }
