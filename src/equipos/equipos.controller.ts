@@ -10,4 +10,13 @@ export class EquiposController {
     return this.appService.getAll();
   }
 
+  @Get(":id")
+  getOne(){
+
+    
+
+  }
+    
+  
+
 }
