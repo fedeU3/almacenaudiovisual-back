@@ -5,6 +5,8 @@ import { PedidosModule } from './pedidos/pedidos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { EquipoEntity } from './equipos/equipo.entity';
+import { MiembroEntity } from './miembros/miembro.entity';
+import { PedidoEntity } from './pedidos/pedido.entity';
 
 @Module({
   imports: [
@@ -12,7 +14,7 @@ import { EquipoEntity } from './equipos/equipo.entity';
     TypeOrmModule.forRoot({
       type: "postgres",
       url: process.env.DATABASE_URL,
-      entities: [EquipoEntity],
+      entities: [EquipoEntity,MiembroEntity,PedidoEntity],
       schema: 'almacenaudiovisual'
     }),
     EquiposModule,

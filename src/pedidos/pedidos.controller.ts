@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 
-@Controller()
+@Controller("pedidos")
 export class PedidosController {
-  constructor(private readonly appService: PedidosService) {}
+  constructor(private readonly pedidosService: PedidosService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getAll() {
+    return this.pedidosService.getAll();
   }
 }
