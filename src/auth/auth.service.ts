@@ -3,12 +3,12 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDTO } from './dto/signup.dto';
 import { LoginDTO } from './dto/login.dto';
-import { UsersService } from 'src/users/users.service';
+import { MiembrosService } from 'src/miembros/miembros.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly miembrosService: MiembrosService,
     private jwtService: JwtService
   ) {}
   getAuth(user) {
@@ -18,15 +18,15 @@ export class AuthService {
   async signUp(signUpDTO: SignUpDTO): Promise<{token: string}> {
     const { password } = signUpDTO;
 
-    const existingUser = await this.usersService.getByEmail(signUpDTO.email);
+    const existingUser = await this.miembrosService.getByUserName(signUpDTO.userID);
 
     if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException('User with this user name already exists');
     }
     
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await this.usersService.createUser({
+    const newUser = await this.miembrosService.createUser({
       ...signUpDTO,
       password: hashedPassword,
     })
@@ -36,13 +36,13 @@ export class AuthService {
     return { token };
   }
 
-  async login(signUpDTO: LoginDTO): Promise<{token: string}> {
-    const { email, password } = signUpDTO;
+  async login(loginDTO: LoginDTO): Promise<{token: string}> {
+    const { userName, password } = loginDTO;
 
-    const existingUser = await this.usersService.getByEmail(email);
+    const existingUser = await this.miembrosService.getByUserName(userName);
 
     if (!existingUser) {
-      throw new NotFoundException('User with this email does not exist');
+      throw new NotFoundException('User with this user name does not exist');
     }
 
     const isPasswordValid = await bcrypt.compare(

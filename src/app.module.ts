@@ -8,7 +8,6 @@ import { EquipoEntity } from './equipos/equipo.entity';
 import { MiembroEntity } from './miembros/miembro.entity';
 import { PedidoEntity } from './pedidos/pedido.entity';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -23,7 +22,6 @@ import { UsersModule } from './users/users.module';
     MiembrosModule,
     PedidosModule,
     AuthModule,
-    UsersModule,
   ],
   controllers: [],
   providers: [],
