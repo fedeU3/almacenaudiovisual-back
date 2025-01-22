@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { EquipoEntity } from './equipos/equipo.entity';
 import { MiembroEntity } from './miembros/miembro.entity';
 import { PedidoEntity } from './pedidos/pedido.entity';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { PedidoEntity } from './pedidos/pedido.entity';
     }),
     EquiposModule,
     MiembrosModule,
-    PedidosModule
+    PedidosModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
