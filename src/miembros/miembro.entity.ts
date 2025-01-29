@@ -27,6 +27,9 @@ export class MiembroEntity {
   @Column('bool')
   esAdmin: boolean;
 
+  @Column('bool')
+  isActive: boolean;
+
   @OneToMany(() => PedidoEntity, (pedido) => pedido.miembro)
   pedidos: PedidoEntity[];
 
