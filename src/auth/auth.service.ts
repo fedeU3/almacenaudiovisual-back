@@ -37,9 +37,9 @@ export class AuthService {
   }
 
   async login(loginDTO: LoginDTO): Promise<{token: string}> {
-    const { userName, password } = loginDTO;
+    const { userID, password } = loginDTO;
 
-    const existingUser = await this.miembrosService.getByUserName(userName);
+    const existingUser = await this.miembrosService.getByUserName(userID);
 
     if (!existingUser) {
       throw new NotFoundException('User with this user name does not exist');
