@@ -1,5 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
+import { CreateEquipoDTO } from './dto/CreateEquipoDTO';
 
 @Controller("equipos")
 export class EquiposController {
@@ -15,7 +16,16 @@ export class EquiposController {
   getOne(@Param('id', ParseIntPipe) id: number) {
     return this.appService.findById(id);
   }
-    
-  
+
+  @Post()
+  async createEquipo(@Body() createEquipoDto: CreateEquipoDTO) {
+    return this.appService.createEquipo(createEquipoDto);
+  }
+
+
+  @Delete(':id')
+  async deleteEquipo(@Param('id', ParseIntPipe) id: number) {
+    return this.appService.deleteEquipo(id);
+  }
 
 }

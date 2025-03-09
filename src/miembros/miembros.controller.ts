@@ -9,4 +9,9 @@ export class MiembrosController {
   getAll() {
     return this.miembrosService.getAll();
   }
+
+  getById(id: number) {
+    return this.miembrosService.getById(id);
+  }
+
 }
