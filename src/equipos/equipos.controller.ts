@@ -11,10 +11,14 @@ export class EquiposController {
     return this.appService.getAll();
   }
 
-  // Endpoint para obtener un equipo por ID
-  @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: number) {
-    return this.appService.findById(id);
+  @Get('name/:name')
+  async getEquipoByName(@Param('name') name: string) {
+    return this.appService.getByName(name);
+  }
+
+  @Get('type/:type')
+  async getEquipoByType(@Param('type') type: string) {
+    return this.appService.getByType(type);
   }
 
   @Post()

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EquipoEntity } from 'src/equipos/equipo.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateEquipoDTO } from './dto/CreateEquipoDTO';
 
 @Injectable()
@@ -14,16 +14,30 @@ export class EquiposService {
     return this.equipoRepository.find();
   }
 
-  // Obtener un equipo por ID
-  async findById(id: number) {
-    const equipo = await this.equipoRepository.findOne({ where: { id } }); // Espera a que la promesa se resuelva
+  
+  getByName(nombre: string) {
+    const equipo = this.equipoRepository.find({
+      where: { nombre: ILike(`%${nombre}%`) },
+    })
 
-    if (!equipo) {
-      throw new NotFoundException(`Equipo con ID ${id} no encontrado`);
+    if (!nombre) {
+      throw new NotFoundException(`Equipo con ID ${nombre} no encontrado`);
     }
 
     return equipo;
-  } 
+  }
+
+  getByType(tipo: string) {
+    const equipo = this.equipoRepository.find({
+      where: { tipo: ILike(`%${tipo}%`) },
+    })
+
+    if (!equipo) {
+      throw new NotFoundException(`Equipo con ID ${tipo} no encontrado`);
+    }
+
+    return equipo;
+  }
 
   async createEquipo(createEquipoDto: CreateEquipoDTO) {
     const equipo = new EquipoEntity();

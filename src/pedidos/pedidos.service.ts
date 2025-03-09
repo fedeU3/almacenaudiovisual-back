@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PedidoEntity } from './pedido.entity';
@@ -13,6 +13,17 @@ export class PedidosService {
   getAll() {
     return this.pedidoRepository.find({relations: ["miembro", "equipo"]});
   }
+
+  // Obtener un pedido por ID
+  async findById(id: number) {
+    const pedido = await this.pedidoRepository.findOne({ where: { id } }); // Espera a que la promesa se resuelva
+
+    if (!pedido) {
+      throw new NotFoundException(`Pedido con ID ${id} no encontrado`);
+    }
+
+    return pedido;
+  } 
 
   async createPedido(createPedidoDto: CreatePedidoDTO) {
 
