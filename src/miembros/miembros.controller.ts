@@ -1,5 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch } from '@nestjs/common';
 import { MiembrosService } from './miembros.service';
+import { UpdateMiembroDTO } from './dto/UpdateMiembroDTO';
 
 @Controller("miembros")
 export class MiembrosController {
@@ -19,5 +20,11 @@ export class MiembrosController {
   getByUserName(@Param('userID') userID: string) {
     return this.miembrosService.getByUserName(userID);
   }
+
+  @Patch(':id')
+  updateMiembro(@Param('id') id: number, @Body() updateMiembroDTO: UpdateMiembroDTO) {
+    return this.miembrosService.updateMiembro(id, updateMiembroDTO);
+  }
+
 
 }
