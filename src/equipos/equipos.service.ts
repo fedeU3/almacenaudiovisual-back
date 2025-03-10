@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EquipoEntity } from 'src/equipos/equipo.entity';
-import { ILike, Repository } from 'typeorm';
+import { ILike, MoreThan, Repository } from 'typeorm';
 import { CreateEquipoDTO } from './dto/CreateEquipoDTO';
 
 @Injectable()
@@ -10,7 +10,14 @@ export class EquiposService {
     @InjectRepository(EquipoEntity) private readonly equipoRepository: Repository<EquipoEntity>,
   ) { }
 
-  getAll() {
+  getAll(query: any) {
+
+    const {estado} = query;
+
+    if (estado === 'disponible') {
+      return this.equipoRepository.find({ where: { cantidadDisponible : MoreThan(0) } });
+    }
+
     return this.equipoRepository.find();
   }
 

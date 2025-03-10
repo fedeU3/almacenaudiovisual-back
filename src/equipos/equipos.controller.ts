@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
 import { CreateEquipoDTO } from './dto/CreateEquipoDTO';
 
@@ -7,8 +7,8 @@ export class EquiposController {
   constructor(private readonly appService: EquiposService) {}
 
   @Get()
-  getAll() {
-    return this.appService.getAll();
+  getAll(@Query() query) {
+    return this.appService.getAll(query);
   }
 
   @Get('name/:name')

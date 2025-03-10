@@ -33,4 +33,6 @@ export class PedidoEntity {
   @Column('text')
   estado: string;
 
+  @Column('text')
+  direccion: string;
 }
