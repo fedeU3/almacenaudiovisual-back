@@ -44,10 +44,10 @@ export class PedidosService {
     const pedido = new PedidoEntity();
     
     pedido.fechaHoraPedido = new Date();
-    pedido.fechaHoraEntrega = null;
+    pedido.fechaHoraEntrega = new Date(createPedidoDto.fechaHoraEntrega);
     pedido.fechaHoraPactada = new Date(createPedidoDto.fechaHoraPactada);
     pedido.fechaHoraDevolucion = null;
-    pedido.estado = createPedidoDto.estado;
+    pedido.estado = 'alquilado';
     pedido.direccion = createPedidoDto.direccion;
   
     // Mapear las relaciones usando los IDs del DTO
