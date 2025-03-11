@@ -1,22 +1,23 @@
-import { Injectable, NotFoundException, PreconditionFailedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PedidoEntity } from './pedido.entity';
 import { CreatePedidoDTO } from './dto/CreatePedidoDTO';
-import { EquipoEntity } from 'src/equipos/equipo.entity';
 import { PedidosEquiposEntity } from 'src/pedidos_equipos/pedidos_equipos.entity';
+import { EquipoEntity } from 'src/equipos/equipo.entity';
 
 
 @Injectable()
 export class PedidosService {
   constructor(
     @InjectRepository(PedidoEntity) private readonly pedidoRepository: Repository<PedidoEntity>,
-    @InjectRepository(EquipoEntity) private readonly equipoRepository: Repository<EquipoEntity>
+    @InjectRepository(PedidosEquiposEntity) private readonly pedidosEquiposRepository: Repository<PedidosEquiposEntity>,
+    @InjectRepository(EquipoEntity) private readonly equipoRepository: Repository<EquipoEntity>,
   ) { }
 
   
   getAll() {
-    return this.pedidoRepository.find({relations: ["miembro", "equipo"]});
+    return this.pedidoRepository.find({relations: ["miembro"]});
   }
 
   // Obtener un pedido por ID
@@ -31,39 +32,68 @@ export class PedidosService {
   } 
 
   async createPedido(createPedidoDto: CreatePedidoDTO) {
+    const fechaHoraPedido = new Date();
+    const fechaHoraEntrega = new Date(createPedidoDto.fechaHoraEntrega);
+    const fechaHoraPactada = new Date(createPedidoDto.fechaHoraPactada);
 
-    /*const equipo = await this.equipoRepository.findOneBy({ id: createPedidoDto.idEquipo });*/
+    // Validaciones básicas de fechas
+    if (fechaHoraEntrega >= fechaHoraPactada) {
+      throw new Error('La fecha de entrega no puede ser anterior a la fecha del pedido.');
+    }
 
-    /*if (!equipo) {
-      throw new NotFoundException(`Equipo con ID ${createPedidoDto.idEquipo} no encontrado`);
-    }*/
+    if (fechaHoraPactada <= fechaHoraEntrega) {
+      throw new Error('La fecha pactada no puede ser anterior a la fecha de entrega.');
+    }
 
-    const pedido = new PedidoEntity();
+    const equipoId = createPedidoDto.idEquipo[0];
+    const equipo = await this.equipoRepository.findOne({ where: { id: equipoId } });
     
-    pedido.fechaHoraPedido = new Date();
-    pedido.fechaHoraEntrega = new Date(createPedidoDto.fechaHoraEntrega);
-    pedido.fechaHoraPactada = new Date(createPedidoDto.fechaHoraPactada);
+    if (!equipo) {
+        throw new Error('El equipo seleccionado no existe.');
+    }
+    // Validar disponibilidad del equipo
+    const pedidosExistentes = await this.pedidosEquiposRepository
+      .createQueryBuilder('pe')
+      .innerJoin('pe.pedido', 'p')
+      .innerJoin('pe.equipo', 'e') // Aseguramos que estamos relacionando con la entidad de equipo
+      .where(
+        `e.id = :equipoId AND ((:fechaHoraEntrega BETWEEN p.fechaHoraEntrega AND p.fechaHoraPactada)
+        OR (:fechaHoraPactada BETWEEN p.fechaHoraEntrega AND p.fechaHoraPactada)
+        OR (p.fechaHoraEntrega BETWEEN :fechaHoraEntrega AND :fechaHoraPactada))`,
+        { equipoId, fechaHoraEntrega, fechaHoraPactada }
+      )
+      .getMany();
+
+    if (pedidosExistentes.length > 0) {
+        throw new Error('El equipo seleccionado ya está reservado en las fechas ingresadas.');
+    }
+
+    // Creación del pedido
+    const pedido = new PedidoEntity();
+    pedido.fechaHoraPedido = fechaHoraPedido;
+    pedido.fechaHoraEntrega = fechaHoraEntrega;
+    pedido.fechaHoraPactada = fechaHoraPactada;
     pedido.fechaHoraDevolucion = null;
     pedido.estado = 'alquilado';
     pedido.direccion = createPedidoDto.direccion;
-  
-    // Mapear las relaciones usando los IDs del DTO
     pedido.miembro = { id: createPedidoDto.idMiembro } as any;
-    pedido.pedidosEquipos = createPedidoDto.idEquipo.map((idEquipo) => {
-      const pedidoEquipo = new PedidosEquiposEntity();
-      pedidoEquipo.equipo = { id: idEquipo } as any;
-      return pedidoEquipo;
-    });
 
-    await this.pedidoRepository.save(pedido);
+    // Creación del pedido de equipo
+    const pedidoEquipo = new PedidosEquiposEntity();
+    pedidoEquipo.equipo = equipo;
 
-    
+    // Asociar pedido y pedidoEquipo
+    pedido.pedidosEquipos = [pedidoEquipo];
 
-    /*await this.equipoRepository.update(createPedidoDto.idEquipo), {
-      
-    };*/
+    // Guardar pedido
+    const pedidoResult = await this.pedidoRepository.save(pedido);
 
-    return pedido;
+    // Asociar y guardar el pedido de equipo
+    pedidoEquipo.pedido = pedidoResult;
+    await this.pedidosEquiposRepository.save(pedidoEquipo);
+    return {
+      id: pedidoResult.id
+    };
  }
 
 }
