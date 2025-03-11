@@ -30,11 +30,8 @@ export class MiembroEntity {
   @Column('bool')
   isActive: boolean;
 
-  @Column('bytea')
-  profilepic: Buffer;
-
   @Column('text')
-  perfilProfecional: string;
+  perfilProfesional: string;
 
   @OneToMany(() => PedidoEntity, (pedido) => pedido.miembro)
   pedidos: PedidoEntity[];
