@@ -1,6 +1,6 @@
-import { EquipoEntity } from "src/equipos/equipo.entity";
 import { MiembroEntity } from "src/miembros/miembro.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { PedidosEquiposEntity } from "src/pedidos_equipos/pedidos_equipos.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity({name: 'pedidos'})
@@ -9,14 +9,12 @@ export class PedidoEntity {
   id: number;
 
   // Relación con UserEntity (sin cascada)
-  @ManyToOne(() => MiembroEntity, (miembros) => miembros.pedidos, { onDelete: 'RESTRICT' })
+  @ManyToOne(() => MiembroEntity, (miembro) => miembro.pedidos, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'idMiembro' }) // Define la columna de clave foránea
   miembro: MiembroEntity;
 
-  // Relación con EquipoEntity (sin cascada)
-  @ManyToOne(() => EquipoEntity, (equipos) => equipos.pedidos, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'idEquipo' }) // Define la columna de clave foránea
-  equipo: EquipoEntity | null;
+  @Column('text')
+  estado: string;
 
   @Column('timestamp')
   fechaHoraPedido: Date;
@@ -31,8 +29,8 @@ export class PedidoEntity {
   fechaHoraDevolucion: Date;
 
   @Column('text')
-  estado: string;
-
-  @Column('text')
   direccion: string;
+
+  @OneToMany(() => PedidosEquiposEntity, (pedidoEquipo) => pedidoEquipo.pedido)
+  pedidosEquipos: PedidosEquiposEntity[];
 }

@@ -4,13 +4,14 @@ import { Repository } from 'typeorm';
 import { PedidoEntity } from './pedido.entity';
 import { CreatePedidoDTO } from './dto/CreatePedidoDTO';
 import { EquipoEntity } from 'src/equipos/equipo.entity';
+import { PedidosEquiposEntity } from 'src/pedidos_equipos/pedidos_equipos.entity';
 
 
 @Injectable()
 export class PedidosService {
   constructor(
     @InjectRepository(PedidoEntity) private readonly pedidoRepository: Repository<PedidoEntity>,
-    @InjectRepository(EquipoEntity) private readonly equipoRepository: Repository<EquipoEntity>,
+    @InjectRepository(EquipoEntity) private readonly equipoRepository: Repository<EquipoEntity>
   ) { }
 
   
@@ -31,15 +32,11 @@ export class PedidosService {
 
   async createPedido(createPedidoDto: CreatePedidoDTO) {
 
-    const equipo = await this.equipoRepository.findOneBy({ id: createPedidoDto.idEquipo });
+    /*const equipo = await this.equipoRepository.findOneBy({ id: createPedidoDto.idEquipo });*/
 
-    if (!equipo) {
+    /*if (!equipo) {
       throw new NotFoundException(`Equipo con ID ${createPedidoDto.idEquipo} no encontrado`);
-    }
-
-    if (equipo.cantidadDisponible < 1) {
-      throw new PreconditionFailedException(`El equipo ${equipo.nombre} no está disponible`);
-    }
+    }*/
 
     const pedido = new PedidoEntity();
     
@@ -52,15 +49,19 @@ export class PedidosService {
   
     // Mapear las relaciones usando los IDs del DTO
     pedido.miembro = { id: createPedidoDto.idMiembro } as any;
-    pedido.equipo = createPedidoDto.idEquipo ? ({ id: createPedidoDto.idEquipo } as any) : null;
+    pedido.pedidosEquipos = createPedidoDto.idEquipo.map((idEquipo) => {
+      const pedidoEquipo = new PedidosEquiposEntity();
+      pedidoEquipo.equipo = { id: idEquipo } as any;
+      return pedidoEquipo;
+    });
 
     await this.pedidoRepository.save(pedido);
 
     
 
-    await this.equipoRepository.update(createPedidoDto.idEquipo, {
-      cantidadDisponible: createPedidoDto.idEquipo ? (equipo.cantidadDisponible - 1) : null,
-    });
+    /*await this.equipoRepository.update(createPedidoDto.idEquipo), {
+      
+    };*/
 
     return pedido;
  }

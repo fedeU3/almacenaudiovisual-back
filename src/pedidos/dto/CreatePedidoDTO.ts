@@ -1,6 +1,6 @@
 export type CreatePedidoDTO = {
   idMiembro: number;
-  idEquipo?: number;
+  idEquipo: number[];
   fechaHoraEntrega: string;
   fechaHoraPactada: string;
   direccion: string;

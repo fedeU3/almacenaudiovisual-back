@@ -7,8 +7,8 @@ export class EquiposController {
   constructor(private readonly appService: EquiposService) {}
 
   @Get()
-  getAll(@Query() query) {
-    return this.appService.getAll(query);
+  getAll() {
+    return this.appService.getAll();
   }
 
   @Get('name/:name')

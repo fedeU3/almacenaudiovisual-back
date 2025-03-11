@@ -7,12 +7,6 @@ export class MiembroEntity {
   id: number;
 
   @Column('text')
-  userID: string;
-
-  @Column('text')
-  password: string;
-
-  @Column('text')
   nombre: string;
 
   @Column('text')
@@ -27,8 +21,20 @@ export class MiembroEntity {
   @Column('bool')
   esAdmin: boolean;
 
+  @Column('text')
+  userID: string;
+
+  @Column('text')
+  password: string;
+
   @Column('bool')
   isActive: boolean;
+
+  @Column('bytea')
+  profilepic: Buffer;
+
+  @Column('text')
+  perfilProfecional: string;
 
   @OneToMany(() => PedidoEntity, (pedido) => pedido.miembro)
   pedidos: PedidoEntity[];

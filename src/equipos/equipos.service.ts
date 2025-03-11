@@ -10,14 +10,7 @@ export class EquiposService {
     @InjectRepository(EquipoEntity) private readonly equipoRepository: Repository<EquipoEntity>,
   ) { }
 
-  getAll(query: any) {
-
-    const {estado} = query;
-
-    if (estado === 'disponible') {
-      return this.equipoRepository.find({ where: { cantidadDisponible : MoreThan(0) } });
-    }
-
+  getAll() {
     return this.equipoRepository.find();
   }
 
@@ -52,9 +45,6 @@ export class EquiposService {
     equipo.nombre = createEquipoDto.nombre;
     equipo.tipo = createEquipoDto.tipo;
     equipo.pertenencia = createEquipoDto.pertenencia;
-    // Convertir los valores numéricos de string a number
-    equipo.cantidadTotal = Number(createEquipoDto.cantidadTotal);
-    equipo.cantidadDisponible = Number(createEquipoDto.cantidadDisponible);
 
     return this.equipoRepository.save(equipo);
   }
