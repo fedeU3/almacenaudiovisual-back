@@ -5,7 +5,6 @@ import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'pedidos_equipos'})
 export class PedidosEquiposEntity {
-
     @PrimaryGeneratedColumn()
     id: number;
 
